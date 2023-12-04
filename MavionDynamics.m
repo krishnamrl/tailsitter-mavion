@@ -1,5 +1,4 @@
 function x_dot = MavionDynamics(x,u,mavion)
-%function x_dot = MavionDynamics(x,u)
 
 % MAVION_DYNAMICS
 % x = [p; v; quat; omega];  
