@@ -1,2 +1,3 @@
 # tailsitter-mavion
-Dynamics and NMPC for the Mavion, a tail-sitting flying wing UAV
+ISAE-SUPAERO's Mavion, a tail-sitting flying wing UAV.
+Dynamics adapted from the MIT tailsitter project, based on Leandro Lustosa's phi-theory - a singularity-free global aerodynamic model for tailsitters.
