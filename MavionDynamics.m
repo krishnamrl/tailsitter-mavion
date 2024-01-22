@@ -1,4 +1,5 @@
 function x_dot = MavionDynamics(x,u,mavion)
+%function x_dot = MavionDynamics(x,u)
 
 % MAVION_DYNAMICS
 % x = [p; v; quat; omega];  
@@ -24,6 +25,27 @@ J = mavion.J;
 dia = mavion.dia;
 pitch = mavion.pitch;
 rho = mavion.density;
+
+% g = 9.81;
+% CdT = 0.01; % loss of prop efficiency due to wing in propwash
+% ClT = 0.5; % propwash-induced lift coefficient
+% CldeltaT = 0.5; % flap lift due to propwash-induced airspeed
+% CldeltaV = 0.5; % flap lift due to airspeed along 0-lift line
+% ClV = 0.5; % wing lift coefficient
+% CdV = 0.01; % wing drag coefficient
+% lTy = 0.105; % abs distance along b_y between vehicle cg and each motor
+% cmuT = 0; % pitch moment coefficient due to thrust
+% ldeltay = 0.123; % abs distance along b_y between vehicle cg and each flap centre
+% ldeltax = 0.0525;  % distance from b_y to ac of both flaps
+% cmu = 0.85; % propeller torque efficiency 
+% cT = 0.0950; % thrust coefficient
+% mass = 0.420;
+% alpha0 = 0; % angle b/w alpha_x and b_x
+% alphaT = 0; % angle b/w thrust dir and b_x
+% J = 1; % moment of inertia tensor
+% dia = 0.1778; % m; 7 inch
+% rho = 1.225;
+
 
 msp1 = u(1); % input 1; motor 1 angular velocity
 msp2 = u(2); % input 2; motor 2 angular velocity
@@ -86,16 +108,20 @@ falpha = falpha_T1 + falpha_T2 + falpha_delta1 + falpha_delta2 + falpha_wing; % 
 m_T = [lTy* iz' * (Rzl_body)' * (falpha_T2 - falpha_T1) ; cmuT*(T1+T2) ; lTy* ix' * (Rzl_body)' * (falpha_T1 - falpha_T2)]; 
 
 % Moment due to motor torque
-% mu1 = -(-1)^(1)*cmu*msp1^2 ;                            
-% mu2 =  -(-1)^(2)*cmu*msp2^2 ; 
+mu1 = -(-1)^(1)*cmu*msp1^2 ;                            
+mu2 =  -(-1)^(2)*cmu*msp2^2 ; 
 
 % specific to thrust at that condition!
-torq = 0.037; % datasheet, changes for each thrust
-%torq = 0.094; % forward flight
-cq = torq/(rho*((msp1*0.159)^2)*(dia^5));
-arm = 0.1225;
-mu1 = (-1)^(1)*cq*rho*((msp1*0.159)^2)*(dia^5)*arm;
-mu2 = (-1)^(2)*cq*rho*((msp2*0.159)^2)*(dia^5)*arm;
+% if (u(1) <= -843.1393) && (u(2) >= 843.1393) && (u(3) >= 0) && (u(4) >= 0)
+%     torq = 0.037; % datasheet, changes for each thrust
+% else 
+%     torq = 0.094; % forward flight
+% end
+% 
+% cq = torq/(rho*((msp1*0.159)^2)*(dia^5));
+% arm = 0.1225;
+% mu1 = (-1)^(1)*cq*rho*((msp1*0.159)^2)*(dia^5)*arm;
+% mu2 = (-1)^(2)*cq*rho*((msp2*0.159)^2)*(dia^5)*arm;
 
 m_mu = [cos(alphaT); 0; -sin(alphaT)] * (mu1+mu2); 
 

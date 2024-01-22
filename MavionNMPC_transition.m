@@ -6,9 +6,9 @@ mavion.gravity = 9.81;
 mavion.CdT = 0; % loss of prop efficiency due to wing in propwash
 mavion.ClT = 0; % propwash-induced lift coefficient
 mavion.CldeltaT = 0.5; % flap lift due to propwash-induced airspeed
-mavion.CldeltaV = 0; % flap lift due to airspeed along 0-lift line
+mavion.CldeltaV = 0.5; % flap lift due to airspeed along 0-lift line
 mavion.ClV = 0.5; % wing lift coefficient 
-mavion.CdV = 0.01; % wing drag coefficient
+mavion.CdV = 0; % wing drag coefficient
 mavion.lTy = 0.105; % abs distance along b_y between vehicle cg and each motor
 mavion.cmuT = 1; % pitch moment coefficient due to thrust
 mavion.ldeltay = 0.123; % abs distance along b_y between vehicle cg and each flap centre
@@ -56,13 +56,12 @@ nlobj.Optimization.SolverOptions.MaxIterations = 8;
 % in our case, we want all the state vector elements to be 0 except for the 
 % vertical position, which should be positive; and pitch angle theta which
 % should be pi/2 rad - we don't care about x and y position.
-% nlobj.Optimization.CustomEqConFcn = @(X,U,data,params) [X(end,4:7)'; X(end,8)-(pi/2); X(end,9:end)'];
+nlobj.Optimization.CustomEqConFcn = @(X,U,data,params) X(end,2)';
 
 % this set the inequality constraints of the MPC problem:
 % in our case, we want MAVION to stay above ground all times during
 % the entire flight phase.
-nlobj.Optimization.CustomIneqConFcn = @(X,U,e,data,params) [X(1:end-9,3)-0; X(1:end-4,8)-(pi/2)]; 
-
+nlobj.Optimization.CustomIneqConFcn = @(X,U,e,data,params) [X(end,3); X(end,3)-2; X(end,8)-(pi/2); X(end,8)-0.3126]; 
 
 % cost function options! I didn't play with it much, since I was happy
 % having any trajectory that worked. in practice, you should tune these
